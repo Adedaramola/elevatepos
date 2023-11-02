@@ -1,0 +1,30 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+          coverage: none
+
+      - name: Install composer dependecies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Install npm dependecies
+        run: yarn ci
+
+      - name: Build frontend assets
+        run: yarn run build
+
+      - name: Execute tests
+        run: php artisan test
